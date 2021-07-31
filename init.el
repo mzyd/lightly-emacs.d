@@ -41,17 +41,21 @@
 
 (global-set-key (kbd "C-w") 'backward-kill-word)
 
+
+
 ; todo set auto pair doesn't work in emacs-lisp
 ;(sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
 ;(sp-local-pair 'lisp-interaction-mode "'" nil :actions nil)
 ; 也可以把上面两句合起来
 ;(sp-local-pair '(emacs-lisp-mode lisp-interaction-mode) "'" nil :actions nil)
+;; (sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)
 
 
 ;`````````````````````````` ``````````````````````````````````````
 ;`````````````````````````` DIRED-MODE````````````````````````````
 ;`````````````````````````` ``````````````````````````````````````
 (put 'dired-find-alternate-file 'disabled nil)
+(global-set-key (kbd "s-b") 'dired-up-directory)
 ;; 主动加载 Dired Mode
 ;; (require 'dired)
 ;; (defined-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
@@ -73,39 +77,62 @@
 
 
 
-
 ;-----------------------------------------------------------
 ;/////////////////////    EVIL /////////////////////////////
 ;-----------------------------------------------------------
 
-(evil-mode 1)
-(setcdr evil-insert-state-map nil)
-(define-key evil-insert-state-map [escape] 'evil-normal-state)
-(delete-selection-mode 1)
-
 (use-package evil-leader
   :ensure t
   :config
-  (global-evil-leader-mode)
-;  :bind ("ff" . 'find-file)
-)
+  (progn
+    (global-evil-leader-mode)
+    (evil-leader/set-key
 
-(evil-leader/set-key
-  "ff" 'find-file
-  "pf" 'helm-do-ag-project-root
-  "bb" 'switch-to-buffer
-  "0"  'select-window-0
-  "1"  'select-window-1
-  "2"  'select-window-2
-  "3"  'select-window-3
+      ;```````````````````````````` Files
+      "ff" 'find-file
+      "fj" 'dired
+      "fs" 'save-buffer
+      "pf" 'helm-do-ag-project-root
 
-  "fj" 'dired
-  "w/" 'split-window-right
-  "ws" 'split-window-below
-  "wd" 'delete-window
-  "wm" 'delete-other-windows
-  "SPC" 'counsel-M-x
-  )
+      ;```````````````````````````` Buffers
+      "bb" 'switch-to-buffer
+      "bp" 'previous-buffer
+      "bn" 'next-buffer
+      "bk" 'kill-buffer
+
+      ;```````````````````````````` Windows
+      "0"  'select-window-0
+      "1"  'select-window-1
+      "2"  'select-window-2
+      "3"  'select-window-3
+      "4"  'select-window-4
+      "w/" 'split-window-right
+      "ws" 'split-window-below
+      "wd" 'delete-window
+      "wm" 'delete-other-windows
+
+      ;```````````````````````````` Settings
+      "SPC" 'counsel-M-x
+      ";" 'evilnc-comment-or-uncomment-lines
+      "cp" 'evilnc-comment-or-uncomment-paragraphs
+
+      "qq" 'save-buffers-kill-terminal
+
+      ;```````````````````````````` Tools
+      "ms" 'youdao-dictionary-search-at-point-tooltip
+      "mc" 'helm-show-kill-ring
+      )
+    ))
+
+
+(evil-mode 1)
+(setq evil-shift-width 2)
+(setcdr evil-insert-state-map nil)
+(define-key evil-insert-state-map [escape] 'evil-normal-state)
+(delete-selection-mode 1)
+;; normal-state 下 RET 键打开最近的 buffer 列表
+;; (define-key evil-normal-state-map (kbd "<RET>") 'helm-mini)
+(define-key evil-normal-state-map (kbd "<RET>") 'helm-projectile-find-file)
 
 
 ;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -215,12 +242,36 @@
        ((t (:inherit ace-jump-face-foreground :height 2.0)))))
     ))
 
-(use-package counsel
-  :ensure
+(use-package window-numbering
+  :ensure t
+  :config
+  (window-numbering-mode 1)
+  (setq window-numbering-assign-func
+      (lambda () (when (equal (buffer-name) "*Calculator*") 9))))
+
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
+
+(use-package evil-nerd-commenter
+  :ensure t
+  :config
+  (evilnc-default-hotkeys)
+  (define-key evil-normal-state-map (kbd ",/") 'evilnc-comment-or-uncomment-lines)
+  (define-key evil-visual-state-map (kbd ",/") 'evilnc-comment-or-uncomment-lines)
   )
 
+(use-package better-defaults
+  :ensure t
+  )
+
+
+(use-package counsel
+  :ensure t)
+
 (use-package swiper
-  :ensure
+  :ensure t
   :config
   (progn
     (ivy-mode)
@@ -258,14 +309,13 @@
 
 (use-package iedit
   :ensure t
-  :config
   )
 
 (use-package recentf
   :ensure t
   :config
   (recentf-mode 1)
-  (setq recentf-max-menu-item 10))
+  (setq recentf-max-menu-item 20))
 
 (use-package hungry-delete
   :ensure t
@@ -299,16 +349,53 @@
   (setq company-minimum-prefix-length 1)
   )
 
+; (use-package auto-complete
+;   :ensure t
+;   :config
+;   (ac-config-default))
+
+
 ; todo , this is not work
 (use-package helm-ag
   :ensure t
   :config
-  :bind ("C-c p f" . helm-do-ag-project-root))
+  ;; :bind ("C-c p f" . helm-do-ag-project-root)
+  )
 
 (use-package flycheck
-  :ensure
+  :ensure t
   :config
   (add-hook 'js2-mode-hook 'flycheck-mode))
+
+(use-package yasnippet
+  :ensure t
+  :config
+  (add-to-list 'load-path
+              "~/.emacs.d/plugins/yasnippet")
+  (yas-global-mode 1))
+
+(use-package youdao-dictionary
+  :ensure t
+  )
+
+
+;*************************************************************
+;*********************  FUN  *********************************
+;*************************************************************
+(use-package nyan-mode
+  :ensure t
+  )
+
+
+
+; (use-package zone-mode
+;   :ensure t
+;   :config
+;   (zone-when-idle 1)
+;   )
+
+
+
 
 ;/////////////////////////////////////////////////////////////
 ;///////////////////////     JS      /////////////////////////
@@ -365,7 +452,7 @@
  '(js2-mode-show-strict-warnings t)
  '(js2-strict-missing-semi-warning nil)
  '(package-selected-packages
-   '(flycheck helm-ag iedit expand-region web-mode highlight-parentheses dired-x popwin company js2-mode smartparens hungry-delete evil-leader counsel swiper ace-window which-key 0blayout use-package try)))
+   '(better-defaults helm-rg youdao-dictionary evil-surround window-numbering window-numbering-mode yasnippet flycheck helm-ag iedit expand-region web-mode highlight-parentheses dired-x popwin company js2-mode smartparens hungry-delete evil-leader counsel swiper ace-window which-key 0blayout use-package try)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

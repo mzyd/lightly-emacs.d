@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: use-package
+# key: uu
+# --
+(use-package $1
+  :ensure t
+  $2)

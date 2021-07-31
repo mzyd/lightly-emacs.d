@@ -1,5 +1,8 @@
 elpa
 auto-save-list
 *.last
+*.dat
 
 recentf
+history
+places
