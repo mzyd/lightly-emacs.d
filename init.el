@@ -21,6 +21,7 @@
 ;///////////////    SETTINGS      //////////////////////////
 ;///////////////////////////////////////////////////////////
 
+(linum-mode 1)
 ; prevent auto backup
 (setq make-backup-files nil)
 
@@ -40,8 +41,6 @@
 (setq dired-recursive-copies 'always)
 
 (global-set-key (kbd "C-w") 'backward-kill-word)
-
-
 
 ; todo set auto pair doesn't work in emacs-lisp
 ;(sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
@@ -83,9 +82,9 @@
 
 (use-package evil-leader
   :ensure t
+  :init (global-evil-leader-mode)
   :config
   (progn
-    (global-evil-leader-mode)
     (evil-leader/set-key
 
       ;```````````````````````````` Files
@@ -93,6 +92,10 @@
       "fj" 'dired-jump
       "fs" 'save-buffer
       "pd" 'helm-projectile-find-dir
+      "fas" 'fasd-find-file
+
+      ;```````````````````````````` Strings
+      "sp" 'helm-project-smart-do-search
 
       ;```````````````````````````` Buffers
       "bb" 'switch-to-buffer
@@ -120,6 +123,7 @@
       "cp" 'evilnc-comment-or-uncomment-paragraphs
 
       "qq" 'save-buffers-kill-terminal
+      "qR" 'restart-emacs
 
       ;```````````````````````````` Tools
       "ms" 'youdao-dictionary-search-at-point-tooltip
@@ -255,15 +259,14 @@
 
 (use-package window-numbering
   :ensure t
+  :init (window-numbering-mode 1)
   :config
-  (window-numbering-mode 1)
   (setq window-numbering-assign-func
       (lambda () (when (equal (buffer-name) "*Calculator*") 9))))
 
 (use-package evil-surround
   :ensure t
-  :config
-  (global-evil-surround-mode 1))
+  :init (global-evil-surround-mode 1))
 
 (use-package evil-nerd-commenter
   :ensure t
@@ -277,6 +280,9 @@
   :ensure t
   )
 
+(use-package restart-emacs
+    :ensure t
+    )
 
 (use-package counsel
   :ensure t)
@@ -388,7 +394,7 @@
   :ensure t
   :config
   (add-to-list 'load-path
-              "~/.emacs.d/plugins/yasnippet")
+              "~/.emacs.d/yasnippet")
   (yas-global-mode 1))
 
 (use-package youdao-dictionary
@@ -399,11 +405,33 @@
   :ensure t
   :config
   :bind ("M-i" . symbol-overlay-put)
-  :bind ("M-n" . symbol-overlay-switch-forward)
-  :bind ("M-p" . symbol-overlay-switch-backward)
+  :bind ("M-n" . symbol-overlay-jump-next)
+  :bind ("M-p" . symbol-overlay-jump-prev)
   :bind ("<F8>" . symbol-overlay-remove-all)
-  
   )
+
+(use-package fasd
+    :ensure t
+    :init (global-fasd-mode 1))
+
+(use-package diff-hl
+  :ensure t
+  :config
+  (global-diff-hl-mode 1)
+  (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+
+
+(use-package powerline
+  :ensure t
+  :config
+  (powerline-default-theme)
+  )
+
+(use-package magit
+  :ensure t
+  )
+
 
 
 
@@ -412,7 +440,7 @@
 ;*************************************************************
 (use-package nyan-mode
   :ensure t
-  )
+  :config (nyan-mode 1))
 
 (require 'zone)
 (zone-when-idle 600)
@@ -464,22 +492,3 @@
 
 
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(evil-leader/leader "SPC")
- '(evil-want-C-u-scroll t)
- '(js2-missing-semi-one-line-override t)
- '(js2-mode-show-parse-errors t)
- '(js2-mode-show-strict-warnings t)
- '(js2-strict-missing-semi-warning nil)
- '(package-selected-packages
-   '(better-defaults helm-rg youdao-dictionary evil-surround window-numbering window-numbering-mode yasnippet flycheck helm-ag iedit expand-region web-mode highlight-parentheses dired-x popwin company js2-mode smartparens hungry-delete evil-leader counsel swiper ace-window which-key 0blayout use-package try)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 2.0)))))
