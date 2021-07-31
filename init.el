@@ -89,16 +89,19 @@
     (evil-leader/set-key
 
       ;```````````````````````````` Files
-      "ff" 'find-file
-      "fj" 'dired
+      "ff" 'helm-find-files
+      "fj" 'dired-jump
       "fs" 'save-buffer
-      "pf" 'helm-do-ag-project-root
+      "pd" 'helm-projectile-find-dir
 
       ;```````````````````````````` Buffers
       "bb" 'switch-to-buffer
+      "bl" 'list-buffers
       "bp" 'previous-buffer
       "bn" 'next-buffer
       "bk" 'kill-buffer
+      "TAB" 'alternate-buffer
+      ;; helm-projectile-recentf
 
       ;```````````````````````````` Windows
       "0"  'select-window-0
@@ -206,6 +209,13 @@
 		(setq imenu-create-index-function 'js2-imenu-make-index)))
 
 (global-set-key (kbd "M-s i") 'counsel-imenu)
+
+
+(defun alternate-buffer ()
+  (interactive)
+  (switch-to-buffer (other-buffer)))
+
+
 ; If you like a tabbar
 ; (use-package tabbar
 ;  :ensure t
@@ -213,6 +223,7 @@
 ;  (tabbar-mode 1))
 
 
+;--------------------------- packages --------------------------------
 (use-package which-key
   :ensure t
   :config (which-key-mode))
@@ -362,6 +373,12 @@
   ;; :bind ("C-c p f" . helm-do-ag-project-root)
   )
 
+(use-package helm-projectile
+  :ensure t
+  :config
+  (helm-projectile-on))
+
+
 (use-package flycheck
   :ensure t
   :config
@@ -378,6 +395,17 @@
   :ensure t
   )
 
+(use-package symbol-overlay
+  :ensure t
+  :config
+  :bind ("M-i" . symbol-overlay-put)
+  :bind ("M-n" . symbol-overlay-switch-forward)
+  :bind ("M-p" . symbol-overlay-switch-backward)
+  :bind ("<F8>" . symbol-overlay-remove-all)
+  
+  )
+
+
 
 ;*************************************************************
 ;*********************  FUN  *********************************
@@ -386,13 +414,9 @@
   :ensure t
   )
 
+(require 'zone)
+(zone-when-idle 600)
 
-
-; (use-package zone-mode
-;   :ensure t
-;   :config
-;   (zone-when-idle 1)
-;   )
 
 
 
