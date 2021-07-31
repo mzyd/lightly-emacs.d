@@ -41,7 +41,7 @@
 
 (global-set-key (kbd "C-w") 'backward-kill-word)
 
-
+; todo set auto pair doesn't work in emacs-lisp
 ;(sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
 ;(sp-local-pair 'lisp-interaction-mode "'" nil :actions nil)
 ; 也可以把上面两句合起来
@@ -60,6 +60,9 @@
     (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file))
 
 (setq dired-dwin-target 1)
+
+;; dired-mode 批量操作
+;; 进入 dired-mode , C-x C-q 进入编辑模式, C-= select region
 
 
 
@@ -89,6 +92,7 @@
 
 (evil-leader/set-key
   "ff" 'find-file
+  "pf" 'helm-do-ag-project-root
   "bb" 'switch-to-buffer
   "0"  'select-window-0
   "1"  'select-window-1
@@ -295,6 +299,16 @@
   (setq company-minimum-prefix-length 1)
   )
 
+; todo , this is not work
+(use-package helm-ag
+  :ensure t
+  :config
+  :bind ("C-c p f" . helm-do-ag-project-root))
+
+(use-package flycheck
+  :ensure
+  :config
+  (add-hook 'js2-mode-hook 'flycheck-mode))
 
 ;/////////////////////////////////////////////////////////////
 ;///////////////////////     JS      /////////////////////////
@@ -325,9 +339,13 @@
 
 
 
+; todo , set indent to 2 spc
 (use-package js2-mode
   :ensure t
-  )
+  :config
+;  (setq js2-mode-hook
+;	(setq-default indent-tabs-mode nil)
+        )
 
 
 
@@ -342,8 +360,12 @@
  ;; If there is more than one, they won't work right.
  '(evil-leader/leader "SPC")
  '(evil-want-C-u-scroll t)
+ '(js2-missing-semi-one-line-override t)
+ '(js2-mode-show-parse-errors t)
+ '(js2-mode-show-strict-warnings t)
+ '(js2-strict-missing-semi-warning nil)
  '(package-selected-packages
-   '(iedit expand-region web-mode highlight-parentheses dired-x popwin company js2-mode smartparens hungry-delete evil-leader counsel swiper ace-window which-key 0blayout use-package try)))
+   '(flycheck helm-ag iedit expand-region web-mode highlight-parentheses dired-x popwin company js2-mode smartparens hungry-delete evil-leader counsel swiper ace-window which-key 0blayout use-package try)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
