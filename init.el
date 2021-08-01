@@ -1,4 +1,30 @@
-;(setq debug-on-error t)
+;;(setq debug-on-error t)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(evil-leader/leader "SPC")
+ '(evil-want-C-u-scroll t)
+ '(js2-missing-semi-one-line-override t)
+ '(js2-mode-show-parse-errors t)
+ '(js2-mode-show-strict-warnings t)
+ '(js2-strict-missing-semi-warning nil)
+ '(package-selected-packages
+   '(magit diff-hl better-defaults helm-rg youdao-dictionary evil-surround window-numbering window-numbering-mode yasnippet flycheck helm-ag iedit expand-region web-mode highlight-parentheses dired-x popwin company js2-mode smartparens hungry-delete evil-leader counsel swiper ace-window which-key 0blayout use-package try)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 2.0)))))
+
+
+
+
+
+
 (setq inhibit-startup-message t)
 
 (require 'package)
@@ -13,16 +39,17 @@
   (package-install 'use-package))
 
 
-; (setq indo-enable-flex-matching t)
-; (setq ido-everywhere t)
-; (ido-mode 1)
+;; (setq indo-enable-flex-matching t)
+;; (setq ido-everywhere t)
+;; (ido-mode 1)
 
-;///////////////////////////////////////////////////////////
-;///////////////    SETTINGS      //////////////////////////
-;///////////////////////////////////////////////////////////
+;;///////////////////////////////////////////////////////////
+;;///////////////    SETTINGS      //////////////////////////
+;;///////////////////////////////////////////////////////////
 
-(linum-mode 1)
-; prevent auto backup
+(global-linum-mode 1)
+(setq linum-format " %d ")
+;; prevent auto backup
 (setq make-backup-files nil)
 
 (global-hl-line-mode 1)
@@ -42,17 +69,17 @@
 
 (global-set-key (kbd "C-w") 'backward-kill-word)
 
-; todo set auto pair doesn't work in emacs-lisp
-;(sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
-;(sp-local-pair 'lisp-interaction-mode "'" nil :actions nil)
-; 也可以把上面两句合起来
-;(sp-local-pair '(emacs-lisp-mode lisp-interaction-mode) "'" nil :actions nil)
+;; todo set auto pair doesn't work in emacs-lisp
+;;(sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
+;;(sp-local-pair 'lisp-interaction-mode "'" nil :actions nil)
+;; 也可以把上面两句合起来
+;; (sp-local-pair '(emacs-lisp-mode lisp-interaction-mode) "'" nil :actions nil)
 ;; (sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)
 
 
-;`````````````````````````` ``````````````````````````````````````
-;`````````````````````````` DIRED-MODE````````````````````````````
-;`````````````````````````` ``````````````````````````````````````
+;;`````````````````````````` ``````````````````````````````````````
+;;`````````````````````````` DIRED-MODE````````````````````````````
+;;`````````````````````````` ``````````````````````````````````````
 (put 'dired-find-alternate-file 'disabled nil)
 (global-set-key (kbd "s-b") 'dired-up-directory)
 ;; 主动加载 Dired Mode
@@ -60,7 +87,7 @@
 ;; (defined-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
 ;; 延迟加载
 (with-eval-after-load 'dired
-    (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file))
+  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file))
 
 (setq dired-dwin-target 1)
 
@@ -76,28 +103,30 @@
 
 
 
-;-----------------------------------------------------------
-;/////////////////////    EVIL /////////////////////////////
-;-----------------------------------------------------------
+;;-----------------------------------------------------------
+;;/////////////////////    EVIL  ////////////////////////////
+;;-----------------------------------------------------------
 
 (use-package evil-leader
   :ensure t
-  :init (global-evil-leader-mode)
   :config
+  (global-evil-leader-mode)
   (progn
     (evil-leader/set-key
 
-      ;```````````````````````````` Files
+      ;;```````````````````````````` Files
+      "fed" 'open-emacs-dotfile
       "ff" 'helm-find-files
       "fj" 'dired-jump
       "fs" 'save-buffer
+      "fo" 'xah-open-in-external-app
       "pd" 'helm-projectile-find-dir
       "fas" 'fasd-find-file
 
-      ;```````````````````````````` Strings
+      ;;```````````````````````````` Strings
       "sp" 'helm-project-smart-do-search
 
-      ;```````````````````````````` Buffers
+      ;;```````````````````````````` Buffers
       "bb" 'switch-to-buffer
       "bl" 'list-buffers
       "bp" 'previous-buffer
@@ -106,7 +135,7 @@
       "TAB" 'alternate-buffer
       ;; helm-projectile-recentf
 
-      ;```````````````````````````` Windows
+      ;;```````````````````````````` Windows
       "0"  'select-window-0
       "1"  'select-window-1
       "2"  'select-window-2
@@ -117,15 +146,16 @@
       "wd" 'delete-window
       "wm" 'delete-other-windows
 
-      ;```````````````````````````` Settings
+      ;;```````````````````````````` Settings
       "SPC" 'counsel-M-x
       ";" 'evilnc-comment-or-uncomment-lines
       "cp" 'evilnc-comment-or-uncomment-paragraphs
+      "=" 'er-indent-region-or-buffer
 
       "qq" 'save-buffers-kill-terminal
       "qR" 'restart-emacs
 
-      ;```````````````````````````` Tools
+      ;;```````````````````````````` Tools
       "ms" 'youdao-dictionary-search-at-point-tooltip
       "mc" 'helm-show-kill-ring
       )
@@ -142,10 +172,10 @@
 (define-key evil-normal-state-map (kbd "<RET>") 'helm-projectile-find-file)
 
 
-;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-;/////////////////////    CUSTOM FUNC   ////////////////////
-;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-; 使用下面的代码则可以定义函数将此换行符删除，
+;;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+;;/////////////////////    CUSTOM FUNC   ////////////////////
+;;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+;; 使用下面的代码则可以定义函数将此换行符删除，
 (defun remove-dos-eol ()
   "Replace DOS eolns CR LF with Unix eolns CR"
   (interactive)
@@ -194,23 +224,23 @@
 (global-set-key (kbd "M-s o") 'occur-dwim)
 
 (defun js2-imenu-make-index ()
-      (interactive)
-      (save-excursion
-	;; (setq imenu-generic-expression '((nil "describe\\(\"\\(.+\\)\"" 1)))
-	(imenu--generic-function '(("describe" "\\s-*describe\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
-				   ("it" "\\s-*it\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
-				   ("test" "\\s-*test\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
-				   ("before" "\\s-*before\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
-				   ("after" "\\s-*after\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
-				   ("Function" "function[ \t]+\\([a-zA-Z0-9_$.]+\\)[ \t]*(" 1)
-				   ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*=[ \t]*function[ \t]*(" 1)
-				   ("Function" "^var[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*=[ \t]*function[ \t]*(" 1)
-				   ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*()[ \t]*{" 1)
-				   ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*:[ \t]*function[ \t]*(" 1)
-				   ("Task" "[. \t]task([ \t]*['\"]\\([^'\"]+\\)" 1)))))
+  (interactive)
+  (save-excursion
+    ;; (setq imenu-generic-expression '((nil "describe\\(\"\\(.+\\)\"" 1)))
+    (imenu--generic-function '(("describe" "\\s-*describe\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
+			       ("it" "\\s-*it\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
+			       ("test" "\\s-*test\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
+			       ("before" "\\s-*before\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
+			       ("after" "\\s-*after\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
+			       ("Function" "function[ \t]+\\([a-zA-Z0-9_$.]+\\)[ \t]*(" 1)
+			       ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*=[ \t]*function[ \t]*(" 1)
+			       ("Function" "^var[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*=[ \t]*function[ \t]*(" 1)
+			       ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*()[ \t]*{" 1)
+			       ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*:[ \t]*function[ \t]*(" 1)
+			       ("Task" "[. \t]task([ \t]*['\"]\\([^'\"]+\\)" 1)))))
 (add-hook 'js2-mode-hook
-	      (lambda ()
-		(setq imenu-create-index-function 'js2-imenu-make-index)))
+	  (lambda ()
+	    (setq imenu-create-index-function 'js2-imenu-make-index)))
 
 (global-set-key (kbd "M-s i") 'counsel-imenu)
 
@@ -219,15 +249,60 @@
   (interactive)
   (switch-to-buffer (other-buffer)))
 
+(defun open-emacs-dotfile()
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
 
-; If you like a tabbar
-; (use-package tabbar
-;  :ensure t
-;  :config
-;  (tabbar-mode 1))
+(defun er-indent-buffer ()
+  "Indent the currently visited buffer."
+  (interactive)
+  (indent-region (point-min) (point-max)))
+
+(defun er-indent-region-or-buffer ()
+  "Indent a region if selected, otherwise the whole buffer."
+  (interactive)
+  (save-excursion
+    (if (region-active-p)
+        (progn
+          (indent-region (region-beginning) (region-end))
+          (message "Indented selected region."))
+      (progn
+        (er-indent-buffer)
+        (message "Indented buffer.")))))
+
+(defun xah-open-in-external-app (&optional file)
+  "Open the current file or dired marked files in external app.
+
+The app is chosen from your OS's preference."
+  (interactive)
+  (let ( doIt
+         (myFileList
+          (cond
+           ((string-equal major-mode "dired-mode") (dired-get-marked-files))
+           ((not file) (list (buffer-file-name)))
+           (file (list file)))))
+
+    (setq doIt (if (<= (length myFileList) 5)
+                   t
+                 (y-or-n-p "Open more than 5 files? ") ) )
+
+    (when doIt
+      (cond
+       ((string-equal system-type "windows-nt")
+        (mapc (lambda (fPath) (w32-shell-execute "open" (replace-regexp-in-string "/" "\\" fPath t t)) ) myFileList))
+       ((string-equal system-type "darwin")
+        (mapc (lambda (fPath) (shell-command (format "open \"%s\"" fPath)) )  myFileList) )
+       ((string-equal system-type "gnu/linux")
+        (mapc (lambda (fPath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" fPath))) myFileList) ) ) ) ) )
+
+;; If you like a tabbar
+;; (use-package tabbar
+;;  :ensure t
+;;  :config
+;;  (tabbar-mode 1))
 
 
-;--------------------------- packages --------------------------------
+;; --------------------------- packages --------------------------------
 (use-package which-key
   :ensure t
   :config (which-key-mode))
@@ -252,7 +327,7 @@
   (progn
     (global-set-key [remap other-window] 'ace-window)
     (custom-set-faces
-    '(aw-leading-char-face
+     '(aw-leading-char-face
        ;; set tip-font size
        ((t (:inherit ace-jump-face-foreground :height 2.0)))))
     ))
@@ -262,7 +337,7 @@
   :init (window-numbering-mode 1)
   :config
   (setq window-numbering-assign-func
-      (lambda () (when (equal (buffer-name) "*Calculator*") 9))))
+        (lambda () (when (equal (buffer-name) "*Calculator*") 9))))
 
 (use-package evil-surround
   :ensure t
@@ -273,16 +348,13 @@
   :config
   (evilnc-default-hotkeys)
   (define-key evil-normal-state-map (kbd ",/") 'evilnc-comment-or-uncomment-lines)
-  (define-key evil-visual-state-map (kbd ",/") 'evilnc-comment-or-uncomment-lines)
-  )
+  (define-key evil-visual-state-map (kbd ",/") 'evilnc-comment-or-uncomment-lines))
 
 (use-package better-defaults
-  :ensure t
-  )
+  :ensure t)
 
 (use-package restart-emacs
-    :ensure t
-    )
+  :ensure t)
 
 (use-package counsel
   :ensure t)
@@ -320,13 +392,12 @@
   :ensure t
   :bind ("C-c C-j" . avy-goto-char))
 
-;(use-package dired-x
-;  :ensure t
-;  )
+;; (use-package dired-x
+;; :ensure t
+;; )
 
 (use-package iedit
-  :ensure t
-  )
+  :ensure t)
 
 (use-package recentf
   :ensure t
@@ -348,8 +419,7 @@
 (use-package smartparens
   :ensure t
   :config
-  (smartparens-global-mode t)
-  )
+  (smartparens-global-mode t))
 
 (use-package highlight-parentheses
   :ensure t
@@ -363,16 +433,15 @@
   (global-company-mode t)
   (setq company-prefix 1)
   (setq company-idle-delay 0.1)
-  (setq company-minimum-prefix-length 1)
-  )
+  (setq company-minimum-prefix-length 1))
 
-; (use-package auto-complete
-;   :ensure t
-;   :config
-;   (ac-config-default))
+;; (use-package auto-complete
+;;   :ensure t
+;;   :config
+;;   (ac-config-default))
 
 
-; todo , this is not work
+;; todo , this is not work
 (use-package helm-ag
   :ensure t
   :config
@@ -394,12 +463,11 @@
   :ensure t
   :config
   (add-to-list 'load-path
-              "~/.emacs.d/yasnippet")
+               "~/.emacs.d/yasnippet")
   (yas-global-mode 1))
 
 (use-package youdao-dictionary
-  :ensure t
-  )
+  :ensure t)
 
 (use-package symbol-overlay
   :ensure t
@@ -407,12 +475,11 @@
   :bind ("M-i" . symbol-overlay-put)
   :bind ("M-n" . symbol-overlay-jump-next)
   :bind ("M-p" . symbol-overlay-jump-prev)
-  :bind ("<F8>" . symbol-overlay-remove-all)
-  )
+  :bind ("<f8>" . symbol-overlay-remove-all))
 
 (use-package fasd
-    :ensure t
-    :init (global-fasd-mode 1))
+  :ensure t
+  :init (global-fasd-mode 1))
 
 (use-package diff-hl
   :ensure t
@@ -425,19 +492,17 @@
 (use-package powerline
   :ensure t
   :config
-  (powerline-default-theme)
-  )
+  (powerline-default-theme))
 
 (use-package magit
-  :ensure t
-  )
+  :ensure t)
 
 
 
 
-;*************************************************************
-;*********************  FUN  *********************************
-;*************************************************************
+;;*************************************************************
+;;*********************  FUN  *********************************
+;;*************************************************************
 (use-package nyan-mode
   :ensure t
   :config (nyan-mode 1))
@@ -449,9 +514,9 @@
 
 
 
-;/////////////////////////////////////////////////////////////
-;///////////////////////     JS      /////////////////////////
-;/////////////////////////////////////////////////////////////
+;;/////////////////////////////////////////////////////////////
+;;///////////////////////     JS      /////////////////////////
+;;/////////////////////////////////////////////////////////////
 (use-package web-mode
   :ensure t
   :config
@@ -462,6 +527,7 @@
 	(append
 	 '(("\\.js\\'" . js2-mode))
 	 '(("\\.html\\'" . web-mode))
+	 '(("\\.wxml\\'" . web-mode))
 	 auto-mode-alist)))
 
 
@@ -478,13 +544,13 @@
 
 
 
-; todo , set indent to 2 spc
+;; todo , set indent to 2 spc
 (use-package js2-mode
   :ensure t
   :config
-;  (setq js2-mode-hook
-;	(setq-default indent-tabs-mode nil)
-        )
+  ;;  (setq js2-mode-hook
+  ;;	(setq-default indent-tabs-mode nil)
+  )
 
 
 
