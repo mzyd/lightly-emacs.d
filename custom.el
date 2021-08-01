@@ -10,7 +10,7 @@
  '(js2-mode-show-strict-warnings t)
  '(js2-strict-missing-semi-warning nil)
  '(package-selected-packages
-   '(magit diff-hl better-defaults helm-rg youdao-dictionary evil-surround window-numbering window-numbering-mode yasnippet flycheck helm-ag iedit expand-region web-mode highlight-parentheses dired-x popwin company js2-mode smartparens hungry-delete evil-leader counsel swiper ace-window which-key 0blayout use-package try)))
+   '(helm-project-persist magit diff-hl better-defaults helm-rg youdao-dictionary evil-surround window-numbering window-numbering-mode yasnippet flycheck helm-ag iedit expand-region web-mode highlight-parentheses dired-x popwin company js2-mode smartparens hungry-delete evil-leader counsel swiper ace-window which-key 0blayout use-package try)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

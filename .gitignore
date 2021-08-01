@@ -2,8 +2,10 @@ elpa
 auto-save-list
 *.last
 *.dat
+*.eld
 
 recentf
 history
 places
 transient/
+url/

@@ -30,7 +30,7 @@
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives
-	     '("melpa" . "https://melpa.org/packages/"))
+             '("melpa" . "https://melpa.org/packages/"))
 
 (package-initialize)
 
@@ -47,6 +47,17 @@
 ;;///////////////    SETTINGS      //////////////////////////
 ;;///////////////////////////////////////////////////////////
 
+
+(setq custom-tab-width 2)
+
+;; (defun disable-tabs () (setq indent-tabs-mode nil))
+;; (defun enable-tabs ()
+;;   (local-set-key (kbd "TAB") 'tab-to-tab-stop)
+;;   (setq indent-tabs-mode t)
+;;   (setq tab-width custom-tab-width))
+
+;; (setq initial-buffer-choice "~/.emacs.d/recentf")
+(fringe-mode 0)
 (global-linum-mode 1)
 (setq linum-format " %d ")
 ;; prevent auto backup
@@ -114,6 +125,7 @@
   (progn
     (evil-leader/set-key
 
+      ;; spacemacs
       ;;```````````````````````````` Files
       "fed" 'open-emacs-dotfile
       "ff" 'helm-find-files
@@ -124,7 +136,10 @@
       "fas" 'fasd-find-file
 
       ;;```````````````````````````` Strings
-      "sp" 'helm-project-smart-do-search
+      "sp" 'counsel-git-grep
+      "sl" 'helm-semantic-or-imenu
+      ;; "sp" 'helm-projectile-grep
+
 
       ;;```````````````````````````` Buffers
       "bb" 'switch-to-buffer
@@ -158,6 +173,8 @@
       ;;```````````````````````````` Tools
       "ms" 'youdao-dictionary-search-at-point-tooltip
       "mc" 'helm-show-kill-ring
+
+      "jj" 'avy-goto-char
       )
     ))
 
@@ -167,9 +184,6 @@
 (setcdr evil-insert-state-map nil)
 (define-key evil-insert-state-map [escape] 'evil-normal-state)
 (delete-selection-mode 1)
-;; normal-state 下 RET 键打开最近的 buffer 列表
-;; (define-key evil-normal-state-map (kbd "<RET>") 'helm-mini)
-(define-key evil-normal-state-map (kbd "<RET>") 'helm-projectile-find-file)
 
 
 ;;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -190,18 +204,24 @@
   (aset buffer-display-table ?\^M []))
 
 
+(defun my-web-mode-indent-setup ()
+  (setq web-mode-markup-indent-offset 2) ; web-mode, html tag in html file
+  (setq web-mode-css-indent-offset 2)    ; web-mode, css in html file
+  (setq web-mode-code-indent-offset 2)   ; web-mode, js code in html file
+  )
+(add-hook 'web-mode-hook 'my-web-mode-indent-setup)
 (defun my-toggle-web-indent ()
   (interactive)
   ;; web development
   (if (or (eq major-mode 'js-mode) (eq major-mode 'js2-mode))
       (progn
-	(setq js-indent-level (if (= js-indent-level 2) 4 2))
-	(setq js2-basic-offset (if (= js2-basic-offset 2) 4 2))))
+        (setq js-indent-level (if (= js-indent-level 2) 4 2))
+        (setq js2-basic-offset (if (= js2-basic-offset 2) 4 2))))
 
   (if (eq major-mode 'web-mode)
       (progn (setq web-mode-markup-indent-offset (if (= web-mode-markup-indent-offset 2) 4 2))
-	     (setq web-mode-css-indent-offset (if (= web-mode-css-indent-offset 2) 4 2))
-	     (setq web-mode-code-indent-offset (if (= web-mode-code-indent-offset 2) 4 2))))
+             (setq web-mode-css-indent-offset (if (= web-mode-css-indent-offset 2) 4 2))
+             (setq web-mode-code-indent-offset (if (= web-mode-code-indent-offset 2) 4 2))))
   (if (eq major-mode 'css-mode)
       (setq css-indent-offset (if (= css-indent-offset 2) 4 2)))
 
@@ -213,13 +233,13 @@
   "Call `occur' with a sane default."
   (interactive)
   (push (if (region-active-p)
-	    (buffer-substring-no-properties
-	     (region-beginning)
-	     (region-end))
-	  (let ((sym (thing-at-point 'symbol)))
-	    (when (stringp sym)
-	      (regexp-quote sym))))
-	regexp-history)
+            (buffer-substring-no-properties
+             (region-beginning)
+             (region-end))
+          (let ((sym (thing-at-point 'symbol)))
+            (when (stringp sym)
+              (regexp-quote sym))))
+        regexp-history)
   (call-interactively 'occur))
 (global-set-key (kbd "M-s o") 'occur-dwim)
 
@@ -228,19 +248,19 @@
   (save-excursion
     ;; (setq imenu-generic-expression '((nil "describe\\(\"\\(.+\\)\"" 1)))
     (imenu--generic-function '(("describe" "\\s-*describe\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
-			       ("it" "\\s-*it\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
-			       ("test" "\\s-*test\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
-			       ("before" "\\s-*before\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
-			       ("after" "\\s-*after\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
-			       ("Function" "function[ \t]+\\([a-zA-Z0-9_$.]+\\)[ \t]*(" 1)
-			       ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*=[ \t]*function[ \t]*(" 1)
-			       ("Function" "^var[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*=[ \t]*function[ \t]*(" 1)
-			       ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*()[ \t]*{" 1)
-			       ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*:[ \t]*function[ \t]*(" 1)
-			       ("Task" "[. \t]task([ \t]*['\"]\\([^'\"]+\\)" 1)))))
+                               ("it" "\\s-*it\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
+                               ("test" "\\s-*test\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
+                               ("before" "\\s-*before\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
+                               ("after" "\\s-*after\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
+                               ("Function" "function[ \t]+\\([a-zA-Z0-9_$.]+\\)[ \t]*(" 1)
+                               ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*=[ \t]*function[ \t]*(" 1)
+                               ("Function" "^var[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*=[ \t]*function[ \t]*(" 1)
+                               ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*()[ \t]*{" 1)
+                               ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*:[ \t]*function[ \t]*(" 1)
+                               ("Task" "[. \t]task([ \t]*['\"]\\([^'\"]+\\)" 1)))))
 (add-hook 'js2-mode-hook
-	  (lambda ()
-	    (setq imenu-create-index-function 'js2-imenu-make-index)))
+          (lambda ()
+            (setq imenu-create-index-function 'js2-imenu-make-index)))
 
 (global-set-key (kbd "M-s i") 'counsel-imenu)
 
@@ -321,16 +341,16 @@ The app is chosen from your OS's preference."
   :config
   (add-hook 'org-mode-hook #'org-bullets-mode))
 
-(use-package ace-window
-  :ensure t
-  :init
-  (progn
-    (global-set-key [remap other-window] 'ace-window)
-    (custom-set-faces
-     '(aw-leading-char-face
-       ;; set tip-font size
-       ((t (:inherit ace-jump-face-foreground :height 2.0)))))
-    ))
+;; (use-package ace-window
+;;   :ensure t
+;;   :init
+;;   (progn
+;;     (global-set-key [remap other-window] 'ace-window)
+;;     (custom-set-faces
+;;      '(aw-leading-char-face
+;;        ;; set tip-font size
+;;        ((t (:inherit ace-jump-face-foreground :height 2.0)))))
+;;     ))
 
 (use-package window-numbering
   :ensure t
@@ -338,6 +358,19 @@ The app is chosen from your OS's preference."
   :config
   (setq window-numbering-assign-func
         (lambda () (when (equal (buffer-name) "*Calculator*") 9))))
+
+(use-package whitespace-cleanup-mode
+  :ensure t
+  :config
+  (global-whitespace-cleanup-mode)
+  ;; (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  ;; (add-hook 'before-save-hook 'whitespace-cleanup)
+  ;; :bind ("<f9>" . whitespace-newline-mode)
+  )
+
+
+;; auto delete the blank between the line
+(add-hook 'before-save-hook 'delete-blank-lines)
 
 (use-package evil-surround
   :ensure t
@@ -389,8 +422,7 @@ The app is chosen from your OS's preference."
 
 
 (use-package avy
-  :ensure t
-  :bind ("C-c C-j" . avy-goto-char))
+  :ensure t)
 
 ;; (use-package dired-x
 ;; :ensure t
@@ -433,25 +465,42 @@ The app is chosen from your OS's preference."
   (global-company-mode t)
   (setq company-prefix 1)
   (setq company-idle-delay 0.1)
-  (setq company-minimum-prefix-length 1))
+  (setq company-minimum-prefix-length 1)
+  :bind
+  (:map company-active-map
+        ([tab] . smarter-yas-expand-next-field-complete)
+        ("TAB" . smarter-yas-expand-next-field-complete))
+  )
 
-;; (use-package auto-complete
-;;   :ensure t
-;;   :config
-;;   (ac-config-default))
-
+(use-package auto-complete
+  :ensure t
+  :config
+  (ac-config-default)
+  (setq ac-auto-show-menu 0.02)
+  (setq ac-use-menu-map t)
+  (define-key ac-menu-map "C-n" 'ac-next)
+  (define-key ac-menu-map "C-p" 'ac-previous)
+  )
 
 ;; todo , this is not work
 (use-package helm-ag
   :ensure t
   :config
   ;; :bind ("C-c p f" . helm-do-ag-project-root)
+  ;; normal-state 下 RET 键打开最近的 buffer 列表
+  ;; (define-key evil-normal-state-map (kbd "<RET>") 'helm-mini)
+  (define-key evil-normal-state-map (kbd "<RET>") 'helm-projectile-find-file)
   )
+
 
 (use-package helm-projectile
   :ensure t
   :config
   (helm-projectile-on))
+
+(use-package helm-swoop
+  :ensure t
+  :bind ("C-c C-j" . helm-swoop))
 
 
 (use-package flycheck
@@ -488,6 +537,24 @@ The app is chosen from your OS's preference."
   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
+;; (global-git-gutter-mode +1)
+;; (custom-set-variables
+;;  '(git-gutter:window-width 2)
+;;  '(git-gutter:modified-sign "♣ ")
+;;  '(git-gutter:added-sign "♦ ")
+;;  '(git-gutter:deleted-sign "✘ ")
+;;  '(git-gutter:lighter "GG")
+;;  )
+;; ;; (set-face-background 'git-gutter:modified "yellow") ;; background color
+;; (set-face-foreground 'git-gutter:modified "yellow")
+;; (set-face-foreground 'git-gutter:added "green")
+;; (set-face-foreground 'git-gutter:deleted "red")
+
+
+(use-package mwim
+  :ensure t
+  :bind ("C-a" . mwim-beginning)
+  :bind ("C-e" . mwim-end))
 
 (use-package powerline
   :ensure t
@@ -514,47 +581,78 @@ The app is chosen from your OS's preference."
 
 
 
+
 ;;/////////////////////////////////////////////////////////////
 ;;///////////////////////     JS      /////////////////////////
 ;;/////////////////////////////////////////////////////////////
+
+;; (require 'rainbow-mode)
+
 (use-package web-mode
   :ensure t
   :config
+  ;; (add-hook 'css-mode-hook 'rainbow-mode)
   (setq web-mode-markup-indent-offset 2) ; web-mode, html tag in html file
   (setq web-mode-css-indent-offset 2)    ; web-mode, css in html file
   (setq web-mode-code-indent-offset 2)   ; web-mode, js code in html file
   (setq auto-mode-alist
-	(append
-	 '(("\\.js\\'" . js2-mode))
-	 '(("\\.html\\'" . web-mode))
-	 '(("\\.wxml\\'" . web-mode))
-	 auto-mode-alist)))
+        (append
+         '(("\\.js\\'" . js2-mode))
+         '(("\\.html\\'" . web-mode))
+         '(("\\.wxml\\'" . web-mode))
+         '(("\\.css\\'" . scss-mode))
+         auto-mode-alist)))
 
+(use-package scss-mode
+  :ensure t
+  :config
+  (setq css-indent-offset 2)
+  (add-hook 'css-mode-hook
+            '(lambda()
+               (setq tab-width 4)))
+  )
 
+(use-package vue-mode
+  :ensure t
+  )
 
+(use-package tern
+  :ensure t
+  :config
+  (add-hook 'js-mode-hook (lambda () (tern-mode t)))
+  )
 
+(use-package emmet-mode
+  :ensure t
+  :config
+  (add-hook 'html-mode-hook 'emmet-mode)
+  (add-hook 'web-mode-hook 'emmet-mode)
+  (add-hook 'css-mode-hook 'emmet-mode))
 
-
-
-
-
-
-
-
-
-
+(use-package js2-refactor
+  :ensure t
+  :config
+  (add-hook 'js2-mode-hook #'js2-refactor-mode)
+  )
 
 ;; todo , set indent to 2 spc
 (use-package js2-mode
   :ensure t
   :config
+  (setq js2-basic-offset 2)
+  (setq-default js-indent-level 2)
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+  ;; Better imenu
+  (add-hook 'js2-mode-hook #'js2-imenu-extras-mode)
   ;;  (setq js2-mode-hook
   ;;	(setq-default indent-tabs-mode nil)
   )
 
-
-
-
-
-
-
+(use-package xref-js2
+  :ensure t
+  :config
+  (define-key js2-mode-map (kbd "M-.") nil)
+  (js2r-add-keybindings-with-prefix "C-c C-r")
+  (define-key js2-mode-map (kbd "C-k") #'js2r-kill)
+  (add-hook 'js2-mode-hook (lambda ()
+                             (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t))))
