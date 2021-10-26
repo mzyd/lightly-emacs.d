@@ -48,6 +48,7 @@
 ;;///////////////////////////////////////////////////////////
 
 
+
 (setq custom-tab-width 2)
 
 ;; (defun disable-tabs () (setq indent-tabs-mode nil))
@@ -86,7 +87,6 @@
 ;; 也可以把上面两句合起来
 ;; (sp-local-pair '(emacs-lisp-mode lisp-interaction-mode) "'" nil :actions nil)
 ;; (sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)
-
 
 ;;`````````````````````````` ``````````````````````````````````````
 ;;`````````````````````````` DIRED-MODE````````````````````````````
@@ -166,19 +166,16 @@
       ";" 'evilnc-comment-or-uncomment-lines
       "cp" 'evilnc-comment-or-uncomment-paragraphs
       "=" 'er-indent-region-or-buffer
-
       "qq" 'save-buffers-kill-terminal
       "qR" 'restart-emacs
 
       ;;```````````````````````````` Tools
-      "ms" 'youdao-dictionary-search-at-point-tooltip
+      "op" 'youdao-dictionary-search-at-point-tooltip
       "mc" 'helm-show-kill-ring
 
       "jj" 'avy-goto-char
       )
     ))
-
-
 (evil-mode 1)
 (setq evil-shift-width 2)
 (setcdr evil-insert-state-map nil)
@@ -189,6 +186,32 @@
 ;;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ;;/////////////////////    CUSTOM FUNC   ////////////////////
 ;;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+;; ---------------- copy word ---------------
+(defun get-point (symbol &optional arg)
+  "get the point"
+  (funcall symbol arg)
+  (point))
+
+(defun copy-thing (begin-of-thing end-of-thing &optional arg)
+  "Copy thing between beg & end into kill ring."
+  (save-excursion
+    (let ((beg (get-point begin-of-thing 1))
+          (end (get-point end-of-thing arg)))
+      (copy-region-as-kill beg end))))
+
+(defun copy-word (&optional arg)
+  "Copy words at point into kill-ring"
+  (interactive "P")
+  (copy-thing 'backward-word 'forward-word arg)
+  ;;(paste-to-mark arg)
+  )
+(define-key evil-normal-state-map (kbd ", a a") 'copy-word)
+(define-key evil-visual-state-map (kbd "v") 'er/expand-region)
+(define-key evil-visual-state-map (kbd "V") 'er/contract-region)
+
+;; ---------------- copy word ---------------
+
+
 ;; 使用下面的代码则可以定义函数将此换行符删除，
 (defun remove-dos-eol ()
   "Replace DOS eolns CR LF with Unix eolns CR"
@@ -563,11 +586,7 @@ The app is chosen from your OS's preference."
 
 (use-package magit
   :ensure t)
-
-
-
-
-;;*************************************************************
+;;************************************
 ;;*********************  FUN  *********************************
 ;;*************************************************************
 (use-package nyan-mode
@@ -656,3 +675,11 @@ The app is chosen from your OS's preference."
   (define-key js2-mode-map (kbd "C-k") #'js2r-kill)
   (add-hook 'js2-mode-hook (lambda ()
                              (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t))))
+
+(use-package evil-escape
+  :ensure t
+  :config
+  (setq-default evil-escape-delay 0.3)
+  (setq evil-escape-excluded-major-modes '(dired-mode))
+  (setq-default evil-escape-key-sequence "kj")
+  (evil-escape-mode 1))
