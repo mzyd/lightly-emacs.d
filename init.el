@@ -187,28 +187,15 @@
 ;;/////////////////////    CUSTOM FUNC   ////////////////////
 ;;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ;; ---------------- copy word ---------------
-(defun get-point (symbol &optional arg)
-  "get the point"
-  (funcall symbol arg)
-  (point))
-
-(defun copy-thing (begin-of-thing end-of-thing &optional arg)
-  "Copy thing between beg & end into kill ring."
-  (save-excursion
-    (let ((beg (get-point begin-of-thing 1))
-          (end (get-point end-of-thing arg)))
-      (copy-region-as-kill beg end))))
-
-(defun copy-word (&optional arg)
-  "Copy words at point into kill-ring"
-  (interactive "P")
-  (copy-thing 'backward-word 'forward-word arg)
-  ;;(paste-to-mark arg)
+(use-package edit-at-point
+  :ensure t
   )
-(define-key evil-normal-state-map (kbd ", a a") 'copy-word)
+(define-key evil-normal-state-map (kbd "; a a") 'edit-at-point-word-copy)
 (define-key evil-visual-state-map (kbd "v") 'er/expand-region)
 (define-key evil-visual-state-map (kbd "V") 'er/contract-region)
-
+;; (define-key evil-normal-state-map (kbd ", e e") 'evil-last-sexp)
+(define-key evil-normal-state-map (kbd "C-e") nil)
+(define-key evil-motion-state-map (kbd "C-e") 'evil-end-of-line)
 ;; ---------------- copy word ---------------
 
 
@@ -346,6 +333,11 @@ The app is chosen from your OS's preference."
 
 
 ;; --------------------------- packages --------------------------------
+(use-package keyfreq
+  :ensure t
+  :config
+  (keyfreq-mode t)
+  )
 (use-package which-key
   :ensure t
   :config (which-key-mode))
@@ -584,8 +576,8 @@ The app is chosen from your OS's preference."
   :config
   (powerline-default-theme))
 
-(use-package magit
-  :ensure t)
+;; (use-package magit
+;;   :ensure t)
 ;;************************************
 ;;*********************  FUN  *********************************
 ;;*************************************************************
