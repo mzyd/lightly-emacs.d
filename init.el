@@ -23,10 +23,6 @@
 
 
 
-
-
-(setq inhibit-startup-message t)
-
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives
@@ -42,12 +38,14 @@
 ;; (setq indo-enable-flex-matching t)
 ;; (setq ido-everywhere t)
 ;; (ido-mode 1)
-
 ;;///////////////////////////////////////////////////////////
 ;;///////////////    SETTINGS      //////////////////////////
 ;;///////////////////////////////////////////////////////////
+(custom-set-faces
+ '(default ((t (:height 150 :family "Hermit"))))
+ )
 
-
+(setq inhibit-startup-message t)
 
 (setq custom-tab-width 2)
 
@@ -167,7 +165,7 @@
       "cp" 'evilnc-comment-or-uncomment-paragraphs
       "=" 'er-indent-region-or-buffer
       "qq" 'save-buffers-kill-terminal
-      "qR" 'restart-emacs
+      "qr" 'restart-emacs
 
       ;;```````````````````````````` Tools
       "op" 'youdao-dictionary-search-at-point-tooltip
@@ -190,7 +188,29 @@
 (use-package edit-at-point
   :ensure t
   )
+(defun mzy/edit-at-point-cut-word ()
+  (interactive)
+  (edit-at-point-word-cut)
+  (evil-insert 1)
+  )
+(defun mzy/evil-ex-s ()
+  (interactive)
+  (evil-ex "'<,'>s/")
+  )
+
+(defun mzy/evil-ex-%s ()
+  (interactive)
+  (evil-ex "%s/")
+  )
+
 (define-key evil-normal-state-map (kbd "; a a") 'edit-at-point-word-copy)
+(define-key evil-normal-state-map (kbd "; c c") 'mzy/edit-at-point-cut-word)
+(define-key evil-normal-state-map (kbd "; s c") 'edit-at-point-word-cut)
+(define-key evil-normal-state-map (kbd "; s r") 'mzy/evil-ex-s)
+(define-key evil-normal-state-map (kbd "; r r") 'mzy/evil-ex-%s)
+(define-key evil-normal-state-map (kbd "; s p") 'edit-at-point-word-paste)
+(define-key evil-normal-state-map (kbd "; s d") 'edit-at-point-word-delete)
+
 (define-key evil-visual-state-map (kbd "v") 'er/expand-region)
 (define-key evil-visual-state-map (kbd "V") 'er/contract-region)
 ;; (define-key evil-normal-state-map (kbd ", e e") 'evil-last-sexp)
@@ -675,3 +695,7 @@ The app is chosen from your OS's preference."
   (setq evil-escape-excluded-major-modes '(dired-mode))
   (setq-default evil-escape-key-sequence "kj")
   (evil-escape-mode 1))
+
+(use-package window-purpose
+  :ensure t
+  :config)
